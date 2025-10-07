@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>דף תצוגה – נהג/נוסע</title>
+  <style>
+    :root{
+      --radius:16px; 
+      --border:#e2e8f0; 
+      --bg:#f8fafc; 
+      --text:#0f172a; 
+      --muted:#64748b;
+      --brand:#2563eb; 
+      --brand-light:#3b82f6;
+      --accent:#06b6d4; 
+      --ok:#10b981; 
+      --err:#ef4444;
+      --card:#ffffff; 
+      --shadow:0 1px 3px rgba(0,0,0,.05), 0 10px 40px rgba(0,0,0,.03);
+      --shadow-lg:0 20px 60px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box; margin:0; padding:0}
+    html,body{height:100%}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+      margin:0;
+      background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color:var(--text);
+      line-height:1.6;
+    }
+    .wrap{max-width:820px; margin-inline:auto; padding:32px 20px}
+    
+    .card{
+      background:var(--card); 
+      border:1px solid var(--border); 
+      border-radius:var(--radius); 
+      padding:28px; 
+      margin:20px 0;
+      box-shadow:var(--shadow);
+      transition:box-shadow 0.3s ease;
+    }
+    .card:hover{
+      box-shadow:var(--shadow-lg);
+    }
+    
+    .header-card{
+      position:relative;
+      overflow:hidden;
+    }
+    .header-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg, var(--brand), var(--accent));
+    }
+    
+    .kicker{
+      font-size:13px; 
+      font-weight:600;
+      letter-spacing:.5px; 
+      color:var(--brand);
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+    
+    h1{
+      font-size:28px; 
+      font-weight:700;
+      margin:0 0 12px;
+      background:linear-gradient(135deg, var(--brand), var(--accent));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    
+    h2{
+      font-size:20px; 
+      font-weight:700;
+      margin:0 0 16px;
+      color:var(--text);
+    }
+    
+    .muted{
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.7;
+    }
+    
+    .row{
+      display:flex; 
+      gap:12px; 
+      align-items:center; 
+      flex-wrap:wrap; 
+      margin:16px 0;
+    }
+    
+    input,button,select{
+      font:inherit; 
+      padding:14px 16px; 
+      border:2px solid var(--border); 
+      border-radius:12px;
+      transition:all 0.2s ease;
+      font-size:15px;
+    }
+    
+    input{
+      flex:1 1 280px;
+      background:#fff;
+      color:var(--text);
+    }
+    input::placeholder{
+      color:#94a3b8;
+    }
+    input:focus{
+      outline:none;
+      border-color:var(--brand);
+      box-shadow:0 0 0 4px rgba(37,99,235,.1);
+    }
+    
+    button{
+      cursor:pointer; 
+      background:#fff;
+      color:var(--text);
+      font-weight:600;
+      border:2px solid var(--border);
+    }
+    button:hover{
+      background:var(--bg);
+      border-color:#cbd5e1;
+    }
+    
+    #lookupBtn{
+      background:linear-gradient(135deg, var(--brand), var(--brand-light));
+      color:#fff;
+      border:none;
+      box-shadow:0 4px 14px rgba(37,99,235,.3);
+    }
+    #lookupBtn:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 20px rgba(37,99,235,.4);
+    }
+    
+    .btn{
+      display:inline-block; 
+      padding:12px 20px; 
+      border:2px solid var(--border); 
+      border-radius:12px; 
+      text-decoration:none; 
+      color:var(--text);
+      font-weight:600;
+      transition:all 0.2s ease;
+      font-size:15px;
+    }
+    .btn:hover{
+      background:var(--bg);
+      border-color:#cbd5e1;
+      transform:translateY(-1px);
+    }
+    .btn.primary{
+      background:linear-gradient(135deg, var(--brand), var(--brand-light)); 
+      color:#fff; 
+      border:none;
+      box-shadow:0 4px 14px rgba(37,99,235,.3);
+    }
+    .btn.primary:hover{
+      box-shadow:0 6px 20px rgba(37,99,235,.4);
+    }
+    
+    .grid{
+      display:grid; 
+      grid-template-columns:1fr; 
+      gap:16px;
+      margin-top:20px;
+    }
+    @media(min-width:600px){ 
+      .grid{grid-template-columns:1fr 1fr} 
+    }
+    
+    .grid-item{
+      padding:16px;
+      background:var(--bg);
+      border-radius:12px;
+      border:1px solid var(--border);
+    }
+    .grid-item .label{
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:8px;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .grid-item .value{
+      font-size:16px;
+      color:var(--text);
+      font-weight:600;
+    }
+    
+    .pill{
+      display:inline-block; 
+      padding:8px 14px; 
+      border:1px solid var(--border); 
+      border-radius:999px; 
+      font-size:14px;
+      background:#fff;
+      font-weight:500;
+    }
+    
+    .ok{
+      color:var(--ok);
+      font-weight:600;
+      font-size:16px;
+    }
+    
+    .err{
+      color:var(--err);
+      font-weight:600;
+      font-size:16px;
+    }
+    
+    .footer-text{
+      font-size:13px; 
+      color:var(--muted); 
+      margin-top:20px;
+      padding-top:20px;
+      border-top:1px solid var(--border);
+    }
+    
+    code{
+      background:var(--bg);
+      padding:2px 6px;
+      border-radius:4px;
+      font-family:'Courier New', monospace;
+      font-size:13px;
+      color:var(--brand);
+    }
+    
+    footer{
+      margin:32px 0; 
+      padding:24px;
+      font-size:13px; 
+      color:#fff; 
+      text-align:center;
+      background:rgba(255,255,255,0.1);
+      border-radius:16px;
+      backdrop-filter:blur(10px);
+      line-height:1.8;
+    }
+    
+    .info-card ol{
+      margin:12px 0 0 24px;
+      line-height:1.9;
+      color:var(--muted);
+    }
+    .info-card ol li{
+      margin-bottom:8px;
+      padding-right:8px;
+    }
+    
+    @media(max-width:720px){
+      .wrap{padding:20px 16px}
+      h1{font-size:24px}
+      .card{padding:24px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- כותרת דינמית לפי role -->
+    <div class="card header-card">
+      <div class="kicker" id="kicker">דף תצוגה</div>
+      <h1 id="title">מצב התאמה</h1>
+      <div class="muted" id="subtitle">הזינו קוד התאמה כדי לראות את הפרטים וליצור קשר מיידי.</div>
+    </div>
+
+    <!-- חיפוש לפי קוד התאמה -->
+    <div class="card">
+      <h2>איתור התאמה</h2>
+      <div class="row">
+        <input id="code" placeholder="קוד התאמה (למשל: Z49F72)" maxlength="12"/>
+        <button id="lookupBtn">בדיקה</button>
+        <button id="clearBtn" title="ניקוי">ניקוי</button>
+      </div>
+      <!-- <div class="muted">💡 ניתן לפתוח את הדף עם פרמטרים ב־URL, למשל: <code>?role=driver&code=Z49F72</code></div> -->
+    </div>
+
+    <!-- תוצאות -->
+    <div class="card" id="resultCard" style="display:none">
+      <div id="statusLine" class="ok">נמצאה התאמה ✅</div>
+      
+      <div class="grid">
+        <div class="grid-item">
+          <div class="label">מוצא</div>
+          <div class="value" id="origin"></div>
+        </div>
+        <div class="grid-item">
+          <div class="label">יעד</div>
+          <div class="value" id="dest"></div>
+        </div>
+        <div class="grid-item">
+          <div class="label">שעת יציאה</div>
+          <div class="value" id="when"></div>
+        </div>
+        <div class="grid-item">
+          <div class="label">הצד השני</div>
+          <div class="value" id="other"></div>
+        </div>
+      </div>
+      
+      <div class="row" style="margin-top:24px">
+        <a class="btn primary" id="telBtn" href="#" target="_self">📞 התקשר</a>
+        <a class="btn" id="smsBtn" href="#" target="_self">💬 שלח SMS</a>
+        <a class="btn" id="mapBtn" href="#" target="_blank" style="display:none">🗺️ מפה</a>
+      </div>
+      
+      <div class="footer-text">קוד התאמה: <strong id="codeEcho"></strong></div>
+    </div>
+
+    <!-- שגיאות / מצב -->
+    <div class="card" id="msgCard" style="display:none">
+      <div id="msgText" class="err">תקלה זמנית, נסו שוב.</div>
+    </div>
+
+    <!-- עזרה -->
+    <div class="card info-card">
+      <h2>איך זה עובד</h2>
+      <ol>
+        <li>מקבלים קוד התאמה לאחר הרישום (או מהרכז).</li>
+        <li>מקלידים את הקוד ולוחצים "בדיקה".</li>
+        <li>מקבלים פרטי קשר מיידית ויוצרים קשר (טלפון / SMS).</li>
+      </ol>
+    </div>
+    
+    <footer>
+      © היסע למילואים – לצורכי מילואים | פרטי קשר נחשפים רק לאחר התאמה<br>
+      לשאלות ניתן לפנות למוקד המילואים בטלפון 1111 שלוחה 4 => 1 => 3
+    </footer>
+  </div>
+
+  <script>
+    // === הגדרות ===
+    const API = 'https://script.google.com/macros/s/PASTE_YOUR_WEB_APP_ID/exec'; // החלף לקישור של ה-Web App
+
+    // שליפת פרמטרים מה-URL
+    const params = new URLSearchParams(location.search);
+    const ROLE = (params.get('role')||'').toLowerCase(); // 'driver' | 'rider' | ''
+    const PRESET_CODE = params.get('code') || '';
+
+    // כותרות דינמיות לפי role
+    const kicker = document.getElementById('kicker');
+    const title  = document.getElementById('title');
+    const subtitle = document.getElementById('subtitle');
+    if (ROLE === 'driver') {
+      kicker.textContent = 'דף תצוגה – נהגים';
+      title.textContent  = 'מצב התאמה לנהג';
+      subtitle.textContent = 'הזינו קוד התאמה שקיבלתם להצגת פרטי הנוסע והנסיעה.';
+    } else if (ROLE === 'rider') {
+      kicker.textContent = 'דף תצוגה – נוסעים';
+      title.textContent  = 'מצב התאמה לנוסע';
+      subtitle.textContent = 'הזינו קוד התאמה להצגת פרטי הנהג והנסיעה.';
+    }
+
+    // DOM refs
+    const codeInput = document.getElementById('code');
+    const lookupBtn = document.getElementById('lookupBtn');
+    const clearBtn  = document.getElementById('clearBtn');
+    const resultCard= document.getElementById('resultCard');
+    const statusLine= document.getElementById('statusLine');
+    const msgCard   = document.getElementById('msgCard');
+    const msgText   = document.getElementById('msgText');
+
+    const el = {
+      origin: document.getElementById('origin'),
+      dest:   document.getElementById('dest'),
+      when:   document.getElementById('when'),
+      other:  document.getElementById('other'),
+      tel:    document.getElementById('telBtn'),
+      sms:    document.getElementById('smsBtn'),
+      map:    document.getElementById('mapBtn'),
+      code:   document.getElementById('codeEcho')
+    };
+
+    function escapeHTML(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c])); }
+
+    async function lookup(){
+      const code = (codeInput.value||'').trim();
+      if (!code) return showMsg('נא להזין קוד התאמה.');
+      msgCard.style.display = 'none';
+      resultCard.style.display = 'none';
+      try {
+        const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ matchCode: code }) });
+        const data = await r.json();
+        if (!data.ok) return showMsg('לא נמצאה התאמה או שהקוד שגוי.');
+        // מילוי נתונים
+        el.origin.textContent = data.origin || '';
+        el.dest.textContent   = data.dest   || '';
+        el.when.textContent   = data.when   || '';
+        el.other.textContent  = (ROLE === 'driver' ? (data.rider || '') : (data.driver || data.rider || ''));
+        el.tel.href = (ROLE === 'driver' ? data.riderTel : data.driverTel) || '#';
+        el.sms.href = (ROLE === 'driver' ? data.smsToRider : data.smsToDriver) || '#';
+        // מפה (אם מחזירים lat/lng מה-API)
+        if (data.mapsHref){ el.map.href = data.mapsHref; el.map.style.display='inline-block'; } else { el.map.style.display='none'; }
+        el.code.textContent = code;
+        statusLine.textContent = 'נמצאה התאמה ✅';
+        statusLine.className = 'ok';
+        resultCard.style.display = 'block';
+      } catch(err){
+        showMsg('תקלה זמנית. נסו שוב.');
+      }
+    }
+
+    function showMsg(t){ msgText.textContent = t; msgCard.style.display = 'block'; }
+
+    lookupBtn.addEventListener('click', lookup);
+    clearBtn.addEventListener('click', ()=>{ codeInput.value=''; msgCard.style.display='none'; resultCard.style.display='none'; });
+
+    // אוטומטית אם באים עם code ב-URL
+    if (PRESET_CODE){ codeInput.value = PRESET_CODE; lookup(); }
+  </script>
+</body>
+</html>
